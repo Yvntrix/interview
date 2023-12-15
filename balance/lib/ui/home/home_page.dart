@@ -35,6 +35,8 @@ class _HomePageState extends State<HomePage> {
                   ),
                   TextButton(
                       onPressed: () {
+                        // prevent add if textfield is empty
+                        if (_controller.text.isEmpty) return;
                         _groupsDao.insert(_controller.text);
                         _controller.text = "";
                       },

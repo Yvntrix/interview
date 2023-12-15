@@ -250,7 +250,8 @@ class $TransactionsTable extends Transactions
       'group_id', aliasedName, false,
       type: DriftSqlType.string,
       requiredDuringInsert: true,
-      $customConstraints: 'NOT NULL REFERENCES groups(id) ON DELETE CASCADE');
+      $customConstraints:
+          'NOT NULL REFERENCES "Groups"("id") ON DELETE CASCADE');
   @override
   List<GeneratedColumn> get $columns => [id, createdAt, amount, groupId];
   @override
@@ -487,4 +488,16 @@ abstract class _$Database extends GeneratedDatabase {
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
   @override
   List<DatabaseSchemaEntity> get allSchemaEntities => [groups, transactions];
+  @override
+  StreamQueryUpdateRules get streamUpdateRules => const StreamQueryUpdateRules(
+        [
+          WritePropagation(
+            on: TableUpdateQuery.onTableName('groups',
+                limitUpdateKind: UpdateKind.delete),
+            result: [
+              TableUpdate('transactions', kind: UpdateKind.delete),
+            ],
+          ),
+        ],
+      );
 }
